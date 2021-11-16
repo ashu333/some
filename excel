@@ -1,0 +1,20 @@
+
+Sub Email_From_Excel()
+
+Dim emailApplication As Object
+Dim emailItem As Object
+
+Set emailApplication = CreateObject(Outlook.Application)
+Set emailItem = emailApplication.CreateItem(0)
+
+'Now build the email
+
+emailItem.to = "ashish.koirala333@gmail.com"
+emailItem.Subject = "Subject for the email"
+emailItem.Body = "The message is a email body"
+
+'emailItem.send
+
+emailItem.display
+
+End Sub
