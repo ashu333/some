@@ -1,20 +1,85 @@
+Sub Email_Notification()
 
-Sub Email_From_Excel()
-
-Dim emailApplication As Object
-Dim emailItem As Object
-
-Set emailApplication = CreateObject(Outlook.Application)
-Set emailItem = emailApplication.CreateItem(0)
-
-'Now build the email
-
-emailItem.to = "ashish.koirala333@gmail.com"
-emailItem.Subject = "Subject for the email"
-emailItem.Body = "The message is a email body"
-
-'emailItem.send
-
-emailItem.display
-
+    Dim OutlookApp  As Object
+    Dim OutlookMail As Object
+    Dim ToName      As String
+    Dim CCName      As String
+    Dim cell        As Range
+    Dim strMsg      As String
+    Dim bodyMsg     As String
+    Dim signature   As String
+    Dim x           As Long
+    Dim LR          As Long
+    
+    Application.ScreenUpdating = False
+    
+    'LR = Cells(Rows.Count, 14).End(xlUp).Row
+    LR = Range("C" & Rows.Count).End(xlUp).Row
+    
+    
+    
+    For x = 2 To LR
+    
+        ToName = Range("C" & x).Value
+       ' CCName = Range("P" & x).Value
+       CCName = "ash.koirala@outlook.com;poulami.mukherjee487@gmail.com"
+        remark = Range("D" & x).Value
+        tokenid = Range("B" & x).Value
+        SubName = "Case ID " & tokenid & " registered with HP Customer Support."
+        
+        If (remark = "Onsite engg") Then
+        
+        bodyMsg = "Dear Sir/Madam," & vbNewLine & "" & vbNewLine & "Thank you for contacting HP Customer Support. We value the opportunity to serve you." & vbNewLine & "" & vbNewLine & "My name is Poulami Mukherjee from EMBEE SOFTWARE PVT LTD. This mail is regarding HP support against case ID " & tokenid & "." & vbNewLine & "" & vbNewLine & "Our engineer will address for the same." & vbNewLine & "" & vbNewLine & "Please feel free to revert in case of any queries." & vbNewLine & "" & vbNewLine & "Thank you for being a valued HP customer." & vbNewLine & "" & vbNewLine & ""
+        
+        ElseIf (remark = "Part order") Then
+        
+        bodyMsg = "Dear Sir/Madam," & vbNewLine & "" & vbNewLine & "Thank you for contacting HP Customer Support. We value the opportunity to serve you." & vbNewLine & "" & vbNewLine & "My name is Poulami Mukherjee from EMBEE SOFTWARE PVT LTD. This mail is regarding HP support against case ID " & tokenid & "." & vbNewLine & "" & vbNewLine & "We have ordered the part after receiving part engineer will assign to attend your call along with the part." & vbNewLine & "" & vbNewLine & "Please feel free to revert in case of any queries." & vbNewLine & "" & vbNewLine & "Thank you for being a valued HP customer." & vbNewLine & "" & vbNewLine & ""
+        
+        ElseIf (remark = "Received CT number") Then
+        
+        bodyMsg = "Dear Sir/Madam," & vbNewLine & "" & vbNewLine & "Thank you for contacting HP Customer Support. We value the opportunity to serve you." & vbNewLine & "" & vbNewLine & "My name is Poulami Mukherjee from EMBEE SOFTWARE PVT LTD. This mail is regarding HP support against case ID " & tokenid & "." & vbNewLine & "" & vbNewLine & "We have received CT number, after getting the part description we will order the part when the part arrives engineer will assign to attend your call along with the part." & vbNewLine & "" & vbNewLine & "Please feel free to revert in case of any queries." & vbNewLine & "" & vbNewLine & "Thank you for being a valued HP customer." & vbNewLine & "" & vbNewLine & ""
+       
+        End If
+        
+       ' If Range("Q" & x).Value <> "Yes" Then
+            strMsg = "Do you want to send the following Email?@1@1Subject: " & SubName & _
+                "@1@1To: " & ToName & _
+                "@1With the following Body: @1" & bodyMsg
+            strMsg = Replace(strMsg, "@1", vbCrLf)
+                        
+            If MsgBox(strMsg, vbQuestion + vbYesNo, "Send Email") = vbYes Then
+            
+                Set OutlookApp = CreateObject("Outlook.application")
+                Set OutlookMailitem = OutlookApp.CreateItem(0)
+                
+                With OutlookMailitem
+                     .Display
+                End With
+                
+                signature = OutlookMailitem.Body
+                
+                With OutlookMailitem
+                    '.Display
+                    .To = ToName
+                    .CC = CCName
+                    .Subject = SubName
+                    .HTMLBody = Body & Attachment
+                    .Body = bodyMsg & signature
+                    '.Attachments.Add Range("L9").Value
+                    .Send
+                End With
+                
+                Set OutlookMail = Nothing
+                Set OutlookApp = Nothing
+                
+                Range("Q" & x).Value = "Yes"
+            Else
+                Range("Q" & x).Value = "No"
+            End If
+       ' End If
+    Next x
+    
+    Application.ScreenUpdating = True
+    
 End Sub
+
